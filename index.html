@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Read Text</title>
+    <style>
+        div {
+            margin-top: 30px;
+            border: solid 1px black;
+            padding: 5px;
+        }
+    </style>
+    <script>
+        var textArray=[]
+        var dateArray=[]
+        var senderArray=[]
+        var messageArray=[]
+        var textArray2=[]
+        var out=''
+        function openFile(files) {
+            var input = files.target;
+            var reader = new FileReader();
+            reader.onload = function(){
+                var text = reader.result;
+                var node = document.getElementById('output');
+                node.innerText = text;
+                textArray = text.split("\n");
+                //console.log(text);
+                //console.log(textArray);
+                for(i=0;i<textArray.length;i++){
+                    if(textArray[i].indexOf('/') === 2&&
+                        textArray[i].substr(textArray[i].indexOf('/')+1).indexOf('/')=== 2){
+                        textArray2.push(textArray[i])
+                    }else{
+                        textArray2[textArray2.length-1]=textArray2[textArray2.length-1]+"\n"+textArray[i];
+                    }
+                }
+                console.log(textArray2);
+                for(j=0;j<textArray2.length;j++){
+                    parseLine(textArray2[j]);
+                }
+                node.innerText = out;
+            };
+            reader.readAsText(input.files[0]);
+            console.log(dateArray);
+            console.log(senderArray);
+            console.log(messageArray);
+        }
+        function parseLine(line) {
+            if(!line || !line.length) {
+                return;
+            }
+            var date = line.substr(0,line.indexOf(' -'));
+            var sender, message;
+            if (line.indexOf(': ') === -1) {
+                sender = 'system';
+                message = line.substr(line.indexOf('- ')+2);
+            }
+            else {
+                sender = line.substr(line.indexOf('- ')+2, line.indexOf(': ')-line.indexOf('- ')-2);
+                message = line.substr(line.indexOf(': ')+2);
+            }
+            //console.log(date+"   "+sender+"   "+message)
+            dateArray.push(date)
+            senderArray.push(sender)
+            messageArray.push(message)
+            out=out+"\n"+date+"   "+sender+"\n"+message+"\n"+"----------------------------------------------";
+        }
+    </script>
+</head>
+<body>
+<input type='file' accept='text/plain' onchange='openFile(event)'><br>
+<div id='output'>
+    ...
+</div>
+</body>
+</html>
